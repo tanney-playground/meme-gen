@@ -83,30 +83,31 @@ const BasicMemeCanvas = ({
     });
   };
 
-  const updateImage = () => {
+  const updateImage = (image: HTMLImageElement) => {
     if (!canvasRef.current) {
       return;
     }
 
     const context = canvasRef.current.getContext("2d");
+
+    resizeCanvasWithLoadedImage(image.width, image.height);
+    context?.drawImage(image, 0, 0);
+  };
+
+  const update = () => {
     const image = document.createElement("img");
 
     image.src = imageUrl;
 
     image.onload = () => {
-      resizeCanvasWithLoadedImage(image.width, image.height);
-      context?.drawImage(image, 0, 0);
+      updateImage(image);
       updateText();
     };
   };
 
   useEffect(() => {
-    updateImage();
-  }, [imageUrl, width, height, textLoc]);
-
-  useEffect(() => {
-    updateText();
-  }, [text]);
+    update();
+  }, [imageUrl, width, height, textLoc, text, canvasRef.current]);
 
   return <canvas ref={canvasRef} width={currentWidth} height={currentHeight} />;
 };
